@@ -3,7 +3,7 @@ defmodule CommandedProcessMap do
   @aggregate_regexp ~r/Commands.+Events.+defstruct.+execute/s
   @handler_regexp ~r/Events\.Handler.+name.+defhandle/s
   @commands_regexp ~r/(Commands.{(?<commands>.*?)}|Commands.(?<command>.*?)\s)/s
-  @events_regexp ~r/(Events.{(?<events>.*?)}|Events.(?<event>.*?)\s)/s
+  @events_regexp ~r/(alias Events.{(?<events>.*?)}|alias Events.(?<event>.*?)\s)/s
   @json_file "./node/data.json"
 
   def run do
