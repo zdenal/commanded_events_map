@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="node_modules/highlight.js/styles/github.css" />
+    <script type="text/javascript" src="node_modules/vis/dist/vis.js"></script>
+    <script
+      type="text/javascript"
+      src="node_modules/highlight.js/lib/highlight.js"
+    ></script>
+    <link
+      href="node_modules/vis/dist/vis.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <style type="text/css">
+      #mynetwork {
+        width: 100%;
+        height: 100%;
+        border: 1px solid lightgray;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mynetwork"></div>
+
+    <script type="text/javascript">
+      // create an array with nodes
+      const typeColor = {
+        aggregate: 'blue',
+        handler: 'green',
+      };
+      const typeShape = {
+        aggregate: 'box',
+        handler: 'ellipse',
+      };
+
+      function transformToNode(node) {
+        //hljs.highlightAuto(node.content).replace(/(?:\r\n|\r|\n)/g, '<br>') +
+        const content =
+          '<code><pre>' +
+          hljs.highlightAuto(node.content).value +
+          '</pre></code>';
+
+        return {
+          id: node.name,
+          label: node.label,
+          title: content,
+          color: typeColor[node.type],
+          group: node.type,
+          font: {
+            size: 20,
+            bold: true,
+          },
+          shape: typeShape[node.type],
+        };
+      }
+
+      function edgesTo(aggregate, handlers) {
+        return aggregate.events.flatMap(event => {
+          return handlers
+            .filter(handler => handler.events.includes(event))
+            .map(handler => {
+              return {
+                from: aggregate.name,
+                to: handler.name,
+                label: event,
+                arrows: {
+                  to: true,
+                },
+              };
+            });
+        });
+      }
+
+      fetch('http://localhost:5000')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          console.log(data);
+          var nodes = new vis.DataSet(data.nodes.map(transformToNode));
+
+          const handlers = data.nodes.filter(node => node.type === 'handler');
+          const aggregates = data.nodes.filter(
+            node => node.type === 'aggregate',
+          );
+          const aggregatesEdges = aggregates.flatMap(aggregate =>
+            edgesTo(aggregate, handlers),
+          );
+
+          // create an array with edges
+          var edges = new vis.DataSet(data.edges);
+
+          // create a network
+          var container = document.getElementById('mynetwork');
+
+          // provide the data in the vis format
+          var data = {
+            nodes: nodes,
+            edges: aggregatesEdges,
+          };
+          var options = {};
+
+          // initialize your network!
+          var network = new vis.Network(container, data, options);
+        });
+    </script>
+  </body>
+</html>

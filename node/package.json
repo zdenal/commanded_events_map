@@ -1,0 +1,17 @@
+{
+  "name": "commanded_process_map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nevralaz@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "highlight.js": "^9.15.6",
+    "koa": "^2.7.0",
+    "koa2-cors": "^2.0.6",
+    "vis": "^4.21.0"
+  }
+}

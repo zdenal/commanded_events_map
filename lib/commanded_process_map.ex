@@ -4,6 +4,7 @@ defmodule CommandedProcessMap do
   @handler_regexp ~r/Events\.Handler.+name.+defhandle/s
   @commands_regexp ~r/(Commands.{(?<commands>.*?)}|Commands.(?<command>.*?)\s)/s
   @events_regexp ~r/(Events.{(?<events>.*?)}|Events.(?<event>.*?)\s)/s
+  @json_file "./node/data.json"
 
   def run do
     files =
@@ -12,6 +13,25 @@ defmodule CommandedProcessMap do
 
     handlers = analyse_handlers(files)
     aggregates = analyse_aggregates(files)
+
+    Enum.concat(handlers, aggregates)
+    |> transform_to_json()
+    |> create_json_file()
+  end
+
+  defp transform_to_json(data) do
+    %{
+      nodes: data,
+      edges: []
+    }
+  end
+
+  defp create_json_file(json) do
+    File.write!(@json_file, Poison.encode!(json), [:binary])
+  end
+
+  defp get_node(data) do
+    %{id: data.name, label: data.label, type: data.type}
   end
 
   defp get_files do
@@ -21,9 +41,12 @@ defmodule CommandedProcessMap do
 
   defp read(file) do
     {:ok, device} = File.open(file, [:read])
-    content = IO.read(device, :all) |> String.replace(~r/\r|\n/, "")
+    # |> String.replace(~r/\r|\n/, "")
+    content = IO.read(device, :all)
+    name = String.replace(file, @directory, "")
+    label = String.split(name, "/") |> Enum.slice(-3, 100) |> Enum.join(" / ")
 
-    %{file: file, content: content, name: String.replace(file, @directory, "")}
+    %{file: file, content: content, name: name, label: label}
   end
 
   defp analyse_aggregates(files) do
