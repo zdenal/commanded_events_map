@@ -1,16 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import _ from 'lodash';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 
-import {convertData, findNodeDeps, findEdgeDeps} from '../graphUtils';
+import {convertData} from '../graphUtils';
 import FlowGraph from '../components/FlowGraph';
-import FilterSelect from '../components/FilterSelect';
+import Filter from '../components/Filter';
+import NodeDialog from '../components/NodeDialog';
 
 export default ({resolution, loadResolution, dispute, isLoading}) => {
   const [data, setData] = useState({nodes: [], edges: []});
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [selectedEdges, setSelectedEdges] = useState([]);
-  const [filterSelectedNodes, setFilterSelectedNodes] = useState([]);
-  const [filterSelectedEdges, setFilterSelectedEdges] = useState([]);
+  const [selectedNodeDialog, selectNodeDialog] = useState({});
+  const [nodeDialogOpen, toggleNodeDialog] = useState(false);
 
   const initData = data => {
     const preparedData = convertData(data);
@@ -28,85 +30,52 @@ export default ({resolution, loadResolution, dispute, isLoading}) => {
       .then(json => initData(json));
   }, []);
 
-  useEffect(
-    () => {
-      if (
-        filterSelectedNodes.length === 0 &&
-        filterSelectedEdges.length === 0
-      ) {
-        setSelectedNodes(data.nodes);
-        return;
-      }
-
-      const search = {nodeIds: []};
-
-      if (filterSelectedEdges.length > 0) {
-        search.nodeIds = findEdgeDeps(
-          filterSelectedEdges,
-          data.nodes,
-          data.edges,
-        );
-
-        search.edges = data.edges.filter(e =>
-          filterSelectedEdges.includes(e.label),
-        );
-      }
-
-      if (filterSelectedNodes.length > 0) {
-        search.nodeIds = findNodeDeps(
-          filterSelectedNodes.concat(search.nodeIds),
-          data.nodes,
-          search.edges || data.edges,
-        ).concat(search.nodeIds);
-      }
-
-      const filteredNodes = data.nodes.filter(node =>
-        search.nodeIds.includes(node.id),
-      );
-
-      setSelectedNodes(filteredNodes);
-      setSelectedEdges(search.edges || data.edges);
-    },
-    [filterSelectedNodes, filterSelectedEdges],
-  );
-
-  const handleNodesChange = e => {
-    setFilterSelectedNodes(e.target.value);
-  };
-
-  const handleEdgesChange = e => {
-    setFilterSelectedEdges(e.target.value);
+  const onNodeSelect = nodes => {
+    console.log(selectedNodes, nodes);
+    selectNodeDialog(selectedNodes.filter(n => n.id === nodes[0])[0]);
+    toggleNodeDialog(true);
   };
 
   if (selectedNodes.length === 0) {
     return <div>Loading ...</div>;
   }
 
+  const style = {
+    root: {
+      flexGrow: 1,
+    },
+    graph: {
+      height: 900,
+    },
+  };
+
   return (
-    <>
-      <FilterSelect
-        items={data.nodes.map(node => ({
-          id: node.id,
-          label: node.label,
-          type: node.group,
-        }))}
-        selectedItems={filterSelectedNodes}
-        handleChange={handleNodesChange}
-        placeholder="Please select nodes to filter"
+    <div style={style.root}>
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
+          <Paper>
+            <Filter
+              data={data}
+              setSelectedNodes={setSelectedNodes}
+              setSelectedEdges={setSelectedEdges}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper style={style.graph}>
+            <FlowGraph
+              nodes={selectedNodes}
+              edges={selectedEdges}
+              onNodeSelect={onNodeSelect}
+            />
+          </Paper>
+        </Grid>
+      </Grid>
+      <NodeDialog
+        node={selectedNodeDialog}
+        isOpen={nodeDialogOpen}
+        toggle={toggleNodeDialog}
       />
-      <FilterSelect
-        items={_.chain(data.edges)
-          .map(edge => ({
-            id: edge.label,
-            label: edge.label,
-          }))
-          .uniqBy('id')
-          .value()}
-        selectedItems={filterSelectedEdges}
-        handleChange={handleEdgesChange}
-        placeholder="Please select events to filter"
-      />
-      <FlowGraph nodes={selectedNodes} edges={selectedEdges} />
-    </>
+    </div>
   );
 };

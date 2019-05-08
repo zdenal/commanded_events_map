@@ -10,12 +10,10 @@ const typeShape = {
 };
 
 const transformToNode = node => {
-  const content = '<code><pre>' + node.content + '</pre></code>';
-
   return {
     id: node.name,
     label: node.label,
-    title: content,
+    content: node.content,
     color: typeColor[node.type],
     group: node.type,
     font: {
@@ -53,7 +51,8 @@ export const findNodeDeps = (nodeIds, nodes, edges) => {
   if (nodeIds.length === 0) return nodes.map(n => n.id);
 
   const foundEdges = edges.filter(
-    edge => nodeIds.includes(edge.from) || nodeIds.includes(edge.to),
+    //edge => nodeIds.includes(edge.from) || nodeIds.includes(edge.to),
+    edge => nodeIds.includes(edge.from),
   );
 
   const nextNodeIds = _.uniq(

@@ -3,6 +3,9 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
+import CheckCircleOutline from '@material-ui/icons/CheckCircleOutline';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 
 export default ({items, selectedItems, handleChange, placeholder}) => {
   return (
@@ -11,23 +14,28 @@ export default ({items, selectedItems, handleChange, placeholder}) => {
         multiple
         displayEmpty
         renderValue={selected => {
-          if (selected.length === 0) {
-            return <em>{placeholder}</em>;
-          }
-
-          return selected.join(', ');
+          return <em>{placeholder}</em>;
         }}
         onChange={handleChange}
         value={selectedItems}
-        input={<Input id="nodes-select" />}>
+        input={<Input />}>
         <MenuItem disabled value="">
           <em>{placeholder}</em>
         </MenuItem>
-        {items.map(item => (
-          <MenuItem key={item.id} value={item.id}>
-            {item.label} ({item.type})
-          </MenuItem>
-        ))}
+        {items.map(item => {
+          return (
+            <MenuItem key={item.id} value={item}>
+              {selectedItems.filter(i => i.id === item.id)[0] && (
+                <ListItemIcon>
+                  <CheckCircleOutline />
+                </ListItemIcon>
+              )}
+              <ListItemText inset>
+                {item.label} ({item.type})
+              </ListItemText>
+            </MenuItem>
+          );
+        })}
       </Select>
     </FormControl>
   );
