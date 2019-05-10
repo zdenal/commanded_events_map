@@ -2,21 +2,26 @@ import React, {useState, useEffect, memo} from 'react';
 import Grid from '@material-ui/core/Grid';
 import _ from 'lodash';
 import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import DescriptionIcon from '@material-ui/icons/Description';
 import FilterSelect from '../FilterSelect';
 import {findNodeDeps, findEdgeDeps} from '../../graphUtils';
 
-const Filter = ({data, setSelectedNodes, setSelectedEdges}) => {
+const Filter = ({
+  data,
+  setSelectedNodes,
+  setSelectedEdges,
+  toggleNodeDialog,
+}) => {
   const [filterSelectedNodes, setFilterSelectedNodes] = useState([]);
   const [filterSelectedEdges, setFilterSelectedEdges] = useState([]);
   const [depth, setDepth] = useState(2);
 
   const handleNodesChange = ({target: {value}}, e) => {
-    console.log(e, value);
     setFilterSelectedNodes(value);
   };
 
   const handleEdgesChange = ({target: {value}}, e) => {
-    console.log(e, value);
     setFilterSelectedEdges(value);
   };
 
@@ -33,6 +38,7 @@ const Filter = ({data, setSelectedNodes, setSelectedEdges}) => {
 
     if (selectedNodesIds.length === 0 && selectedEdgesIds.length === 0) {
       setSelectedNodes(data.nodes);
+      setSelectedEdges(data.edges);
       return;
     }
 
@@ -83,7 +89,7 @@ const Filter = ({data, setSelectedNodes, setSelectedEdges}) => {
           placeholder="Please select nodes to filter"
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={1}>
         <TextField
           label="Depth"
           value={depth}
@@ -108,8 +114,16 @@ const Filter = ({data, setSelectedNodes, setSelectedEdges}) => {
             .value()}
           selectedItems={filterSelectedEdges}
           handleChange={handleEdgesChange}
-          placeholder="Please select events to filter"
+          placeholder="Please select edges to filter"
         />
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton
+          onClick={() => toggleNodeDialog(true)}
+          color="primary"
+          component="span">
+          <DescriptionIcon />
+        </IconButton>
       </Grid>
     </Grid>
   );

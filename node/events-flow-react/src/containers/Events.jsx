@@ -58,6 +58,7 @@ export default ({resolution, loadResolution, dispute, isLoading}) => {
               data={data}
               setSelectedNodes={setSelectedNodes}
               setSelectedEdges={setSelectedEdges}
+              toggleNodeDialog={toggleNodeDialog}
             />
           </Paper>
         </Grid>
