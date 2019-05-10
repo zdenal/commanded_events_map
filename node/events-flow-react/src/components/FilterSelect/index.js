@@ -1,5 +1,5 @@
 import React from 'react';
-import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
@@ -18,18 +18,13 @@ export default ({items, selectedItems, handleChange, placeholder}) => {
         }}
         onChange={handleChange}
         value={selectedItems}
-        input={<Input />}>
+        input={<OutlinedInput />}>
         <MenuItem disabled value="">
           <em>{placeholder}</em>
         </MenuItem>
         {items.map(item => {
           return (
-            <MenuItem key={item.id} value={item}>
-              {selectedItems.filter(i => i.id === item.id)[0] && (
-                <ListItemIcon>
-                  <CheckCircleOutline />
-                </ListItemIcon>
-              )}
+            <MenuItem key={item.id} value={item.id}>
               <ListItemText inset>
                 {item.label} ({item.type})
               </ListItemText>

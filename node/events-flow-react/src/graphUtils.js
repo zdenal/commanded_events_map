@@ -50,9 +50,9 @@ export const findEdgeDeps = (edgeLabels, nodes, edges) => {
     .flatMap(e => [e.from, e.to]);
 };
 
-export const findNodeDeps = (nodeIds, nodes, edges, level = 2) => {
+export const findNodeDeps = (nodeIds, nodes, edges, level) => {
   if (nodeIds.length === 0) return nodes.map(n => n.id);
-  if (level === 0) return nodeIds;
+  if (level < 1) return nodeIds;
 
   const foundEdges = edges.filter(
     edge => nodeIds.includes(edge.from) || nodeIds.includes(edge.to),
