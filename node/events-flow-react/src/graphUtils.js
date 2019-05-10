@@ -12,7 +12,10 @@ const typeShape = {
 const transformToNode = node => {
   return {
     id: node.name,
-    label: node.label,
+    label: node.name
+      .split('/')
+      .slice(-3)
+      .join(' / '),
     content: node.content,
     color: typeColor[node.type],
     group: node.type,
@@ -24,14 +27,14 @@ const transformToNode = node => {
   };
 };
 
-const edgesTo = (aggregate, handlers) => {
-  return aggregate.events.flatMap(event => {
-    return handlers
-      .filter(handler => handler.events.includes(event))
-      .map(handler => {
+const edgesTo = (fromNode, nodes, link) => {
+  return fromNode[link].flatMap(event => {
+    return nodes
+      .filter(node => node[link].includes(event))
+      .map(node => {
         return {
-          from: aggregate.name,
-          to: handler.name,
+          from: fromNode.name,
+          to: node.name,
           label: event,
           arrows: {
             to: true,
@@ -47,12 +50,13 @@ export const findEdgeDeps = (edgeLabels, nodes, edges) => {
     .flatMap(e => [e.from, e.to]);
 };
 
-export const findNodeDeps = (nodeIds, nodes, edges) => {
+export const findNodeDeps = (nodeIds, nodes, edges, level = 2) => {
   if (nodeIds.length === 0) return nodes.map(n => n.id);
+  if (level === 0) return nodeIds;
 
   const foundEdges = edges.filter(
-    //edge => nodeIds.includes(edge.from) || nodeIds.includes(edge.to),
-    edge => nodeIds.includes(edge.from),
+    edge => nodeIds.includes(edge.from) || nodeIds.includes(edge.to),
+    //edge => nodeIds.includes(edge.from),
   );
 
   const nextNodeIds = _.uniq(
@@ -62,13 +66,25 @@ export const findNodeDeps = (nodeIds, nodes, edges) => {
   if (nextNodeIds.length === 0) return nodeIds;
   if (_.difference(nextNodeIds, nodeIds).length === 0) return nodeIds;
 
-  return findNodeDeps(_.uniq(nodeIds.concat(nextNodeIds)), nodes, edges);
+  return findNodeDeps(
+    _.uniq(nodeIds.concat(nextNodeIds)),
+    nodes,
+    edges,
+    level - 1,
+  );
 };
 
 export const convertData = data => {
   const handlers = data.nodes.filter(node => node.type === 'handler');
   const aggregates = data.nodes.filter(node => node.type === 'aggregate');
-  const edges = aggregates.flatMap(aggregate => edgesTo(aggregate, handlers));
+  const processors = data.nodes.filter(node => node.type === 'processor');
+  const edges = [
+    ...aggregates.flatMap(aggregate => edgesTo(aggregate, handlers, 'events')),
+    ...handlers.flatMap(handler => edgesTo(handler, processors, 'events')),
+    ...processors.flatMap(processor =>
+      edgesTo(processor, aggregates, 'commands'),
+    ),
+  ];
   const nodes = data.nodes.map(transformToNode);
 
   return {

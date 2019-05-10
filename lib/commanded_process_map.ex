@@ -1,6 +1,7 @@
 defmodule CommandedProcessMap do
   @directory "/Users/zdenko/Projects/utrust/platform/apps"
   @aggregate_regexp ~r/Commands.+Events.+defstruct.+execute/s
+  @processor_regexp ~r/Commanded\.ProcessManagers\.ProcessManager/s
   @handler_regexp ~r/Events\.Handler.+name.+defhandle/s
   @commands_regexp ~r/(Commands.{(?<commands>.*?)}|Commands.(?<command>.*?)\s)/s
   @events_regexp ~r/(alias Events.{(?<events>.*?)}|alias Events.(?<event>.*?)\s)/s
@@ -13,16 +14,17 @@ defmodule CommandedProcessMap do
 
     handlers = analyse_handlers(files)
     aggregates = analyse_aggregates(files)
+    processors = analyse_processors(files) |> IO.inspect()
 
     Enum.concat(handlers, aggregates)
+    |> Enum.concat(processors)
     |> transform_to_json()
     |> create_json_file()
   end
 
   defp transform_to_json(data) do
     %{
-      nodes: data,
-      edges: []
+      nodes: data
     }
   end
 
@@ -41,12 +43,17 @@ defmodule CommandedProcessMap do
 
   defp read(file) do
     {:ok, device} = File.open(file, [:read])
-    # |> String.replace(~r/\r|\n/, "")
     content = IO.read(device, :all)
     name = String.replace(file, @directory, "")
-    label = String.split(name, "/") |> Enum.slice(-3, 100) |> Enum.join(" / ")
 
-    %{file: file, content: content, name: name, label: label}
+    %{file: file, content: content, name: name}
+  end
+
+  defp analyse_processors(files) do
+    files
+    |> Enum.filter(&is_processor?/1)
+    |> Enum.map(&Map.merge(&1, %{type: "processor"}))
+    |> Enum.map(&analyse/1)
   end
 
   defp analyse_aggregates(files) do
@@ -98,6 +105,7 @@ defmodule CommandedProcessMap do
   end
 
   defp is_aggregate?(%{content: content}), do: Regex.match?(@aggregate_regexp, content)
+  defp is_processor?(%{content: content}), do: Regex.match?(@processor_regexp, content)
   defp is_handler?(%{content: content}), do: Regex.match?(@handler_regexp, content)
 
   defp remove_empty(list), do: Enum.filter(list, &(String.length(&1) > 0))

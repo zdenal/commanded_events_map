@@ -12,7 +12,13 @@ const FlowGraph = ({nodes, edges, onNodeSelect}) => {
   const graphRef = createRef();
 
   useEffect(() => {
-    const network = new Network(graphRef.current, data, {});
+    const options = {
+      physics: {
+        enabled: true,
+        solver: 'repulsion',
+      },
+    };
+    const network = new Network(graphRef.current, data, options);
     network.on('selectNode', function(params) {
       onNodeSelect(params.nodes);
     });

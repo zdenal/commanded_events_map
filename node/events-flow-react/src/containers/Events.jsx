@@ -33,7 +33,7 @@ export default ({resolution, loadResolution, dispute, isLoading}) => {
   const onNodeSelect = nodes => {
     console.log(selectedNodes, nodes);
     selectNodeDialog(selectedNodes.filter(n => n.id === nodes[0])[0]);
-    toggleNodeDialog(true);
+    //toggleNodeDialog(true);
   };
 
   if (selectedNodes.length === 0) {
