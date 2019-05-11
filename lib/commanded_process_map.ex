@@ -1,10 +1,7 @@
 defmodule CommandedProcessMap do
-  @directory "/Users/zdenko/Projects/utrust/platform/apps"
-  @path_wildcard "/*/lib/**/*.ex"
-
   def run do
     files =
-      Path.wildcard(@directory <> @path_wildcard)
+      Path.wildcard(config(:project)[:path] <> config(:project)[:path_wildcard])
       |> Enum.map(&read/1)
 
     config(:types)
@@ -12,6 +9,8 @@ defmodule CommandedProcessMap do
     |> List.flatten()
     |> transform_to_json()
     |> create_json_file()
+
+    IO.puts("Done.")
   end
 
   defp handle_types({type, regex}, files) do
@@ -34,7 +33,7 @@ defmodule CommandedProcessMap do
   defp read(file) do
     {:ok, device} = File.open(file, [:read])
     content = IO.read(device, :all)
-    name = String.replace(file, @directory, "")
+    name = String.replace(file, config(:project)[:path], "")
 
     %{file: file, content: content, name: name}
   end

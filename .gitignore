@@ -22,5 +22,5 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 commanded_process_map-*.tar
 
-/node/node_modules/*
-/node/data.json
+/**/node_modules/*
+data.json

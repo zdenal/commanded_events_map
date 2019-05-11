@@ -8,7 +8,7 @@ const server = new Koa();
 server
   .use(cors())
   .use(ctx => {
-    const jsonData = require('./data.json');
+    const jsonData = require('../data.json');
     ctx.body = jsonData;
   })
   .listen(PORT, () => {

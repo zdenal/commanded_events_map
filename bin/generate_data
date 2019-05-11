@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Scanning project and generating data"
+mix scan_and_generate

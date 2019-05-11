@@ -9,7 +9,10 @@ use Mix.Config
 # third-party users, it should be done in your "mix.exs" file.
 
 # You can configure your application as:
-#
+config :commanded_process_map, :project,
+  path: "/Users/zdenko/Projects/utrust/platform/apps",
+  path_wildcard: "/*/lib/**/*.ex"
+
 config :commanded_process_map, :types,
   aggregate: ~r/Commands.+Events.+defstruct.+execute/s,
   processor: ~r/Commanded\.ProcessManagers\.ProcessManager/s,
@@ -26,6 +29,6 @@ config :commanded_process_map, :regexp,
     scan: ~r/Events\.\w*/s
   }
 
-config :commanded_process_map, json_file: "./node/data.json"
+config :commanded_process_map, json_file: "./frontend_client/data.json"
 
 #     import_config "#{Mix.env()}.exs"

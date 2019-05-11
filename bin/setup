@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Mix compile"
+mix compile
+
+echo "Install client deps"
+yarn --cwd frontend_client/events-flow-react
