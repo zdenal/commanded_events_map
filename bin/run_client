@@ -4,4 +4,4 @@ echo "Running server"
 node frontend_client/server/server.js &
 
 echo "Running client app"
-yarn --cwd frontend_client/events-flow-react start
+yarn --cwd frontend_client/events-flow-react start && fg
