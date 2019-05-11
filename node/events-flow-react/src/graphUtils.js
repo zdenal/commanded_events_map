@@ -80,7 +80,7 @@ export const convertData = data => {
   const processors = data.nodes.filter(node => node.type === 'processor');
   const edges = [
     ...aggregates.flatMap(aggregate => edgesTo(aggregate, handlers, 'events')),
-    ...handlers.flatMap(handler => edgesTo(handler, processors, 'events')),
+    ...handlers.flatMap(handler => edgesTo(handler, processors, 'commands')),
     ...processors.flatMap(processor =>
       edgesTo(processor, aggregates, 'commands'),
     ),
