@@ -10,21 +10,22 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :commanded_process_map, key: :value
-#
-# and access this configuration in your application as:
-#
-#     Application.get_env(:commanded_process_map, :key)
-#
-# You can also configure a third-party app:
-#
-#     config :logger, level: :info
-#
+config :commanded_process_map, :types,
+  aggregate: ~r/Commands.+Events.+defstruct.+execute/s,
+  processor: ~r/Commanded\.ProcessManagers\.ProcessManager/s,
+  projector: ~r/Commanded\.Projections.+name.+project/s,
+  handler: ~r/Events\.Handler.+name.+defhandle/s
 
-# It is also possible to import configuration files, relative to this
-# directory. For example, you can emulate configuration per environment
-# by uncommenting the line below and defining dev.exs, test.exs and such.
-# Configuration from the imported file will override the ones defined
-# here (which is why it is important to import them last).
-#
+config :commanded_process_map, :regexp,
+  commands: %{
+    named: ~r/Commands.{(?<commands>.*?)}/s,
+    scan: ~r/Commands\.\w*/s
+  },
+  events: %{
+    named: ~r/alias Events.{(?<events>.*?)}/s,
+    scan: ~r/Events\.\w*/s
+  }
+
+config :commanded_process_map, json_file: "./node/data.json"
+
 #     import_config "#{Mix.env()}.exs"
