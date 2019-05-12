@@ -13,16 +13,22 @@ defmodule CommandedProcessMap do
     IO.puts("Done.")
   end
 
-  defp handle_types({type, regex}, files) do
+  defp handle_types({type, %{regexp: regexp, not_one_of: not_one_of}}, files) do
     files
-    |> Enum.filter(&check_type(&1, regex))
+    |> Enum.filter(&check_type(&1, regexp))
+    |> Enum.filter(&check_not(&1, not_one_of))
     |> Enum.map(&Map.merge(&1, %{type: type}))
     |> Enum.map(&analyse/1)
   end
 
   defp transform_to_json(data) do
     %{
-      nodes: data
+      nodes: data,
+      outputs:
+        config(:types)
+        |> Enum.reduce(%{}, fn {type, %{output: output, targets: targets}}, acc ->
+          Map.put(acc, type, %{output: output, targets: targets})
+        end)
     }
   end
 
@@ -75,6 +81,11 @@ defmodule CommandedProcessMap do
   end
 
   defp check_type(%{content: content}, regexp), do: Regex.match?(regexp, content)
+
+  defp check_not(%{content: content}, []), do: true
+
+  defp check_not(%{content: content}, not_one_of),
+    do: not_one_of |> Enum.map(&Regex.match?(&1, content)) |> Enum.member?(true) |> Kernel.not()
 
   defp remove_empty(list),
     do:

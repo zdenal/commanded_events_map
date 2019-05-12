@@ -75,16 +75,22 @@ export const findNodeDeps = (nodeIds, nodes, edges, level) => {
 };
 
 export const convertData = data => {
-  const handlers = data.nodes.filter(node => node.type === 'handler');
-  const aggregates = data.nodes.filter(node => node.type === 'aggregate');
-  const processors = data.nodes.filter(node => node.type === 'processor');
-  const edges = [
-    ...aggregates.flatMap(aggregate => edgesTo(aggregate, handlers, 'events')),
-    ...handlers.flatMap(handler => edgesTo(handler, processors, 'commands')),
-    ...processors.flatMap(processor =>
-      edgesTo(processor, aggregates, 'commands'),
-    ),
-  ];
+  const types = {};
+
+  Object.keys(data.outputs).map(type => {
+    types[type] = data.nodes.filter(node => node.type === type);
+  });
+
+  const edges = Object.keys(data.outputs).flatMap(type => {
+    const {output, targets} = data.outputs[type];
+
+    if (output === null || targets === null) return [];
+
+    const targetTypes = targets.flatMap(t => types[t]);
+
+    return types[type].flatMap(n => edgesTo(n, targetTypes, output));
+  });
+
   const nodes = data.nodes.map(transformToNode);
 
   return {
