@@ -15,7 +15,7 @@ const Filter = ({
 }) => {
   const [filterSelectedNodes, setFilterSelectedNodes] = useState([]);
   const [filterSelectedEdges, setFilterSelectedEdges] = useState([]);
-  const [depth, setDepth] = useState(2);
+  const [depth, setDepth] = useState(1);
 
   const handleNodesChange = ({target: {value}}, e) => {
     setFilterSelectedNodes(value);
