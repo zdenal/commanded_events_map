@@ -15,7 +15,7 @@ const FlowGraph = ({nodes, edges, onNodeSelect}) => {
     const options = {
       physics: {
         enabled: true,
-        solver: 'repulsion',
+        solver: 'forceAtlas2Based', // 'barnesHut', 'repulsion', 'hierarchicalRepulsion', 'forceAtlas2Based'
       },
     };
     const network = new Network(graphRef.current, data, options);

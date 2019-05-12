@@ -24,3 +24,4 @@ commanded_process_map-*.tar
 
 /**/node_modules/*
 data.json
+dev.exs
