@@ -44,7 +44,7 @@ spiking ideas and update config regexp by it. It will generate you graph for pre
 
 ## TODO
 - [ ] after regenerating data let server returning new data (no needs to restart)
+- [ ] get rid of react compile warnings
 - [ ] investigation/play with graph options to reach better UX
-- [ ] think about graph options which could be play/set `vis` graph option for user on FE
 - [ ] update README by UI possibilities description (selecting, source code view, ...)
 - [ ] improve selectors (suggestion filter, ...)

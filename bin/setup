@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Mix deps.get"
+mix deps.get
 echo "Mix compile"
 mix compile
 
