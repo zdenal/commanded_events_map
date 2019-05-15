@@ -5,3 +5,4 @@ mix compile
 
 echo "Install client deps"
 yarn --cwd frontend_client/events-flow-react
+yarn --cwd frontend_client/server
