@@ -27,7 +27,7 @@ fixed soon.*
 
 - `config :commanded_process_map, :project`
   - `path:` set path to your project
-  - `path_wildcard:` set wildcard pattern to anaylyse only files which matters. (eg. `/lib/**/*.ex` or `/*/lib/**/*.ex` in umbrella apps)
+  - `path_wildcard:` set wildcard pattern to anaylyse only files which matters. (eg. `/lib/**/*.ex` or `/apps/*/lib/**/*.ex` in umbrella apps)
 
 
 - `config :commanded_process_map, :types` are representing **nodes** if FE flow graph. The `key` is type of node and following are
