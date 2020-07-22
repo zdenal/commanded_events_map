@@ -39,6 +39,7 @@ defmodule CommandedProcessMap do
   defp read(file) do
     {:ok, device} = File.open(file, [:read])
     content = IO.read(device, :all)
+    :ok = File.close(device)
     name = String.replace(file, config(:project)[:path], "")
 
     %{file: file, content: content, name: name}
@@ -82,7 +83,7 @@ defmodule CommandedProcessMap do
 
   defp check_type(%{content: content}, regexp), do: Regex.match?(regexp, content)
 
-  defp check_not(%{content: content}, []), do: true
+  defp check_not(%{content: _content}, []), do: true
 
   defp check_not(%{content: content}, not_one_of),
     do: not_one_of |> Enum.map(&Regex.match?(&1, content)) |> Enum.member?(true) |> Kernel.not()
