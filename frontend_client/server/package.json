@@ -12,5 +12,6 @@
     "koa": "^2.7.0",
     "koa2-cors": "^2.0.6",
     "vis": "^4.21.0"
-  }
+  },
+  "devDependencies": {}
 }
