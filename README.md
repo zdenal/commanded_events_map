@@ -43,7 +43,7 @@ including regexp for **named** capturing and parsing and for **scan** parsing.
 spiking ideas and update config regexp by it. It will generate you graph for presenting that logic/structure.***
 
 ## TODO
-- [ ] after regenerating data let server returning new data (no needs to restart)
+- [x] after regenerating data let server returning new data (no needs to restart)
 - [ ] get rid of react compile warnings
 - [ ] investigation/play with graph options to reach better UX
 - [ ] update README by UI possibilities description (selecting, source code view, ...)
