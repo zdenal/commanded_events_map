@@ -19,9 +19,6 @@ is used to get better files what we want to analyse.
 3. execute `./bin/generate_data`. This command will generate required json file for FE in `frontend_client` folder.
 4. execute `./bin/run_client`. Will run server (serving generated json file to FE) and open FE react application in browser.
 
-*!! Right now once you'll generate data again you need also restart client to let server return new generated data. This will be
-fixed soon.*
-
 ## Configuration & Base Logic
 **The main app logic is based on configuration and regular expressions.** In [config/dev.exs](config/dev.exs) you can play with it.
 
@@ -44,7 +41,7 @@ spiking ideas and update config regexp by it. It will generate you graph for pre
 
 ## TODO
 - [x] after regenerating data let server returning new data (no needs to restart)
-- [ ] get rid of react compile warnings
+- [x] get rid of react compile warnings
 - [ ] investigation/play with graph options to reach better UX
 - [ ] update README by UI possibilities description (selecting, source code view, ...)
 - [ ] improve selectors (suggestion filter, ...)
