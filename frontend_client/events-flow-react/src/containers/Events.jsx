@@ -1,20 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
+import React, { useState, useEffect } from "react";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 
-import {convertData} from '../graphUtils';
-import FlowGraph from '../components/FlowGraph';
-import Filter from '../components/Filter';
-import NodeDialog from '../components/NodeDialog';
+import { convertData } from "../graphUtils";
+import FlowGraph from "../components/FlowGraph";
+import Filter from "../components/Filter";
+import NodeDialog from "../components/NodeDialog";
 
-export default ({resolution, loadResolution, dispute, isLoading}) => {
-  const [data, setData] = useState({nodes: [], edges: []});
+export default ({ resolution, loadResolution, dispute, isLoading }) => {
+  const [data, setData] = useState({ nodes: [], edges: [] });
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [selectedEdges, setSelectedEdges] = useState([]);
   const [selectedNodeDialog, selectNodeDialog] = useState({});
   const [nodeDialogOpen, toggleNodeDialog] = useState(false);
 
-  const initData = data => {
+  const initData = (data) => {
     const preparedData = convertData(data);
 
     setData(preparedData);
@@ -23,16 +23,16 @@ export default ({resolution, loadResolution, dispute, isLoading}) => {
   };
 
   useEffect(() => {
-    fetch('http://localhost:5000')
-      .then(function(response) {
+    fetch("http://localhost:5000")
+      .then(function (response) {
         return response.json();
       })
-      .then(json => initData(json));
+      .then((json) => initData(json));
   }, []);
 
-  const onNodeSelect = nodes => {
+  const onNodeSelect = (nodes) => {
     console.log(selectedNodes, nodes);
-    selectNodeDialog(selectedNodes.filter(n => n.id === nodes[0])[0]);
+    selectNodeDialog(selectedNodes.filter((n) => n.id === nodes[0])[0]);
   };
 
   if (selectedNodes.length === 0) {

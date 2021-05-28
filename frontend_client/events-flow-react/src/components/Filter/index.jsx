@@ -1,11 +1,11 @@
-import React, {useState, useEffect, memo} from 'react';
-import Grid from '@material-ui/core/Grid';
-import _ from 'lodash';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
-import DescriptionIcon from '@material-ui/icons/Description';
-import FilterSelect from '../FilterSelect';
-import {findNodeDeps, findEdgeDeps} from '../../graphUtils';
+import React, { useState, useEffect, memo } from "react";
+import Grid from "@material-ui/core/Grid";
+import _ from "lodash";
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import DescriptionIcon from "@material-ui/icons/Description";
+import FilterSelect from "../FilterSelect";
+import { findNodeDeps, findEdgeDeps } from "../../graphUtils";
 
 const Filter = ({
   data,
@@ -17,18 +17,18 @@ const Filter = ({
   const [filterSelectedEdges, setFilterSelectedEdges] = useState([]);
   const [depth, setDepth] = useState(1);
 
-  const handleNodesChange = ({target: {value}}, e) => {
+  const handleNodesChange = ({ target: { value } }, e) => {
     setFilterSelectedNodes(value);
   };
 
-  const handleEdgesChange = ({target: {value}}, e) => {
+  const handleEdgesChange = ({ target: { value } }, e) => {
     setFilterSelectedEdges(value);
   };
 
   const style = {
     filter: {
       padding: 12,
-      textAlign: 'center',
+      textAlign: "center",
     },
   };
 
@@ -42,12 +42,14 @@ const Filter = ({
       return;
     }
 
-    const search = {nodeIds: []};
+    const search = { nodeIds: [] };
 
     if (selectedEdgesIds.length > 0) {
       search.nodeIds = findEdgeDeps(selectedEdgesIds, data.nodes, data.edges);
 
-      search.edges = data.edges.filter(e => selectedEdgesIds.includes(e.label));
+      search.edges = data.edges.filter((e) =>
+        selectedEdgesIds.includes(e.label)
+      );
     }
 
     if (selectedNodesIds.length > 0) {
@@ -55,19 +57,26 @@ const Filter = ({
         selectedNodesIds.concat(search.nodeIds),
         data.nodes,
         search.edges || data.edges,
-        depth,
+        depth
       ).concat(search.nodeIds);
     }
 
-    const filteredNodes = data.nodes.filter(node =>
-      search.nodeIds.includes(node.id),
+    const filteredNodes = data.nodes.filter((node) =>
+      search.nodeIds.includes(node.id)
     );
 
     setSelectedNodes(filteredNodes);
     setSelectedEdges(search.edges || data.edges);
-  }, [filterSelectedNodes, filterSelectedEdges, depth]);
+  }, [
+    filterSelectedNodes,
+    filterSelectedEdges,
+    depth,
+    data,
+    setSelectedEdges,
+    setSelectedNodes,
+  ]);
 
-  const nodeItems = data.nodes.map(node => ({
+  const nodeItems = data.nodes.map((node) => ({
     id: node.id,
     label: node.label,
     type: node.group,
@@ -80,7 +89,8 @@ const Filter = ({
       item
       justify="space-around"
       direction="row"
-      alignItems="center">
+      alignItems="center"
+    >
       <Grid item xs={5}>
         <FilterSelect
           items={nodeItems}
@@ -93,8 +103,8 @@ const Filter = ({
         <TextField
           label="Depth"
           value={depth}
-          inputProps={{min: 0}}
-          onChange={event => setDepth(event.target.value)}
+          inputProps={{ min: 0 }}
+          onChange={(event) => setDepth(event.target.value)}
           type="number"
           InputLabelProps={{
             shrink: true,
@@ -106,11 +116,11 @@ const Filter = ({
       <Grid item xs={5}>
         <FilterSelect
           items={_.chain(data.edges)
-            .map(edge => ({
+            .map((edge) => ({
               id: edge.label,
               label: edge.label,
             }))
-            .uniqBy('id')
+            .uniqBy("id")
             .value()}
           selectedItems={filterSelectedEdges}
           handleChange={handleEdgesChange}
@@ -121,7 +131,8 @@ const Filter = ({
         <IconButton
           onClick={() => toggleNodeDialog(true)}
           color="primary"
-          component="span">
+          component="span"
+        >
           <DescriptionIcon />
         </IconButton>
       </Grid>
